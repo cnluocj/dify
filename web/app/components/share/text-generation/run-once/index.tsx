@@ -1,9 +1,10 @@
 import type { FC, FormEvent } from 'react'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   RiPlayLargeLine,
 } from '@remixicon/react'
+import { useSearchParams } from 'next/navigation'
 import Select from '@/app/components/base/select'
 import type { SiteInfo } from '@/models/share'
 import type { PromptConfig } from '@/models/debug'
@@ -40,6 +41,50 @@ const RunOnce: FC<IRunOnceProps> = ({
   const { t } = useTranslation()
   const media = useBreakpoints()
   const isPC = media === MediaType.pc
+  const searchParams = useSearchParams()
+
+  // 从URL参数中读取autoFillText，并自动填充表单字段
+  useEffect(() => {
+    const autoFillText = searchParams.get('autoFillText')
+    if (autoFillText) {
+      try {
+        const decodedText = decodeURIComponent(autoFillText)
+        console.log('从URL参数中读取到文本:', decodedText)
+
+        // 检查所有可能的字段类型，优先填充paragraph类型
+        // 1. 首先尝试找到paragraph类型的变量
+        const paragraphVar = promptConfig.prompt_variables.find(item => item.type === 'paragraph')
+
+        // 2. 如果没有paragraph类型，尝试找text类型
+        const textVar = !paragraphVar && promptConfig.prompt_variables.find(item =>
+          item.type === 'string' || item.name.toLowerCase().includes('text'),
+        )
+
+        // 3. 如果都没有找到，使用第一个变量
+        const targetVar = paragraphVar || textVar || promptConfig.prompt_variables[0]
+
+        if (targetVar) {
+          // 自动填充文本
+          const newInputs = { ...inputsRef.current }
+          newInputs[targetVar.key] = decodedText
+          onInputsChange(newInputs)
+          console.log('表单已自动填充到字段:', targetVar.name)
+
+          // 如果用户希望自动提交，可以取消注释下面一行
+          // setTimeout(() => onSend(), 500)
+        }
+        else {
+          console.warn('未找到合适的表单字段用于自动填充')
+        }
+      }
+      catch (err) {
+        console.error('处理URL参数时出错:', err)
+      }
+    }
+    else {
+      console.log('URL中没有自动填充参数')
+    }
+  }, [searchParams, promptConfig.prompt_variables, inputsRef, onInputsChange])
 
   const onClear = () => {
     const newInputs: Record<string, any> = {}
