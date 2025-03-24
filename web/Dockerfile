@@ -30,7 +30,7 @@ WORKDIR /app/web
 COPY --from=packages /app/web/ .
 COPY . .
 
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN pnpm build
 
 
@@ -47,6 +47,7 @@ ENV MARKETPLACE_URL=http://127.0.0.1:5001
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PM2_INSTANCES=2
+ENV KEPU_WORKFLOW_PATH=workflow/lOBoQSJZyce0XB9D
 
 # set timezone
 ENV TZ=UTC
