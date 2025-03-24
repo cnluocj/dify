@@ -178,7 +178,7 @@ const Operation: FC<OperationProps> = ({
         const encodedText = encodeURIComponent(newText)
 
         // 从环境变量中获取工作流路径，如果不存在则使用默认值
-        const workflowPath = process.env.NEXT_PUBLIC_KEPU_WORKFLOW_PATH || ''
+        const workflowPath = process.env.NEXT_PUBLIC_KEPU_WORKFLOW_PATH || 'workflow/lOBoQSJZyce0XB9D'
 
         // 处理路径，确保格式正确（移除开头的斜杠，避免重复）
         const formattedPath = workflowPath.startsWith('/') ? workflowPath.substring(1) : workflowPath
@@ -200,7 +200,7 @@ const Operation: FC<OperationProps> = ({
         Toast.notify({ type: 'error', message: '设置自动填充失败' })
 
         // 出错时仍然跳转，但可能不会自动填充
-        const workflowPath = process.env.NEXT_PUBLIC_KEPU_WORKFLOW_PATH || ''
+        const workflowPath = process.env.NEXT_PUBLIC_KEPU_WORKFLOW_PATH || 'workflow/lOBoQSJZyce0XB9D'
         const formattedPath = workflowPath.startsWith('/') ? workflowPath.substring(1) : workflowPath
         const currentUrl = window.location.origin
         window.location.href = `${currentUrl}/${formattedPath}`
